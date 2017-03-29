@@ -1,0 +1,11 @@
+name: BookQuest
+main: cc.isotopestudio.bookquest.BookQuest
+
+author: Mars
+description: BookQuest
+website: http://isotopestudio.cc
+version: 1.0.0
+commands:
+  quest:
+    description: BookQuest
+    usage: /<command>
