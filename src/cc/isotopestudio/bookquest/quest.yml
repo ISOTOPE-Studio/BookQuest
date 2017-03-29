@@ -1,4 +1,35 @@
 a:
   name: "&3任务名字"
   goal:
-  -
+    '1':
+      type: mob
+      mob: ZOMBIE
+      num: 5
+    '2':
+      type: mob
+      mob: ZOMBIE
+      name: "垃圾僵尸"
+      num: 5
+    '3':
+      type: item
+      item: DIAMOND
+      num: 5
+    '4':
+      type: item
+      item: DIAMOND
+      name: "假的钻石"
+      num: 5
+    '5':
+      type: money
+      num: 500
+    '6':
+      type: time
+      num: 10
+  rewards:
+  - "give <player> diamond 1"
+  # 每日一次
+  limit: "daily"
+  # 五次
+  # limit: "5"
+  # cd 1小时
+  # limit: "1h"

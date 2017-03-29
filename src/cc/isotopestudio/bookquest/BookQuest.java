@@ -7,6 +7,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BookQuest extends JavaPlugin {
 
+    public static BookQuest plugin;
+
     private static final String pluginName = "BookQuest";
     public static final String prefix = (new StringBuilder()).append(ChatColor.GOLD).append(ChatColor.BOLD).append("[")
             .append("任务").append("]").append(ChatColor.RED).toString();
@@ -16,6 +18,8 @@ public class BookQuest extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        plugin = this;
+
         config = new PluginFile(this, "config.yml", "config.yml");
 
         new UpdateConfigTask().runTask(this);
