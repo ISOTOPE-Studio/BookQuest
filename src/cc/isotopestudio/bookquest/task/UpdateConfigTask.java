@@ -5,24 +5,28 @@ package cc.isotopestudio.bookquest.task;
  */
 
 import cc.isotopestudio.bookquest.element.Task;
-import cc.isotopestudio.bookquest.element.goal.Goal;
+import cc.isotopestudio.bookquest.element.goal.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static cc.isotopestudio.bookquest.BookQuest.plugin;
+import static cc.isotopestudio.bookquest.element.Task.tasks;
 
 public class UpdateConfigTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        Task.tasks.clear();
+        tasks.clear();
         taskLoop:
         for (String taskName : plugin.questFile.getKeys(false)) {
             ConfigurationSection section = plugin.questFile.getConfigurationSection(taskName);
-            String displayName = section.getString("name");
+            String displayName = s(section.getString("name"));
 
             ConfigurationSection goalsConfig = section.getConfigurationSection("goal");
             if (goalsConfig == null) {
@@ -31,36 +35,80 @@ public class UpdateConfigTask extends BukkitRunnable {
             }
             List<Goal> goals = new ArrayList<>();
             for (String goalName : goalsConfig.getKeys(false)) {
+                Goal goal;
                 ConfigurationSection goalSection = goalsConfig.getConfigurationSection(goalName);
-                String type = goalSection.getString("type");
-                switch (type) {
+                String goalType = goalSection.getString("type");
+                int num = goalSection.getInt("num");
+                switch (goalType) {
                     case "mob":
-
+                        EntityType etype;
+                        try {
+                            etype = EntityType.valueOf(goalSection.getString("mob").toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("ERROR MOB TYPE");
+                            continue taskLoop;
+                        }
+                        String mobName = goalSection.getString("name");
+                        goal = mobName == null ?
+                                new MobGoal(num, etype) : new MobGoal(num, etype, s(mobName));
                         break;
                     case "item":
-
+                        Material mtype;
+                        try {
+                            mtype = Material.valueOf(goalSection.getString("item").toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("ERROR ITEM TYPE");
+                            continue taskLoop;
+                        }
+                        goal = new ItemGoal(num, mtype);
+                        if (goalSection.isSet("name")) {
+                            ((ItemGoal) goal).setName(s(goalSection.getString("name")));
+                        }
+                        if (goalSection.isSet("data")) {
+                            ((ItemGoal) goal).setData((byte) goalSection.getInt("data"));
+                        }
                         break;
                     case "money":
-
+                        goal = new MoneyGoal(num);
                         break;
                     case "time":
-
+                        goal = new TimeGoal(num);
                         break;
                     default:
                         System.out.println("ERROR GOAL TYPE");
                         continue taskLoop;
                 }
+                goals.add(goal);
+
             }
             if (goals.size() == 0) {
                 System.out.println("ERROR GOAL SETTINGS");
                 continue;
             }
+            List<String> rewards = section.getStringList("rewards");
 
+            String limit = null;
             if (section.isSet("limit")) {
-                String limit = section.getString("limit");
+                limit = section.getString("limit");
+                if (limit.equalsIgnoreCase("daily")) {
+
+                } else if (limit.endsWith("h")) {
+
+                } else {
+
+                }
 
             }
+
+            tasks.put(taskName, new Task(displayName, goals, rewards, limit));
+
         }
+
+        System.out.println(tasks);
+
     }
 
+    private static String s(String s) {
+        return ChatColor.translateAlternateColorCodes('&', s);
+    }
 }

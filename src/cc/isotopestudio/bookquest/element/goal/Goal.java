@@ -6,6 +6,9 @@ package cc.isotopestudio.bookquest.element.goal;
 
 public abstract class Goal {
 
-    private int num;
+    int num;
 
+    public Goal(int num) {
+        this.num = num;
+    }
 }

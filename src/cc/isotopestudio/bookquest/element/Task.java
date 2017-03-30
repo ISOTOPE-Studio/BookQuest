@@ -41,4 +41,15 @@ public class Task {
     public String getLimit() {
         return limit;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Task{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", goals=").append(goals);
+        sb.append(", rewards=").append(rewards);
+        sb.append(", limit='").append(limit).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

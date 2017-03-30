@@ -1,9 +1,10 @@
-package cc.isotopestudio.bookquest;
+package cc.isotopestudio.bookquest.command;
 /*
  * Created by Mars Tan on 3/29/2017.
  * Copyright ISOTOPE Studio
  */
 
+import cc.isotopestudio.bookquest.gui.TaskGUI;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,18 +16,12 @@ public class CommandQuest implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("quest")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(S.toPrefixRed("Íæ¼ÒÖ´ĞĞµÄÃüÁî"));
+                return true;
+            }
             Player player = (Player) sender;
-//            if (!player.hasPermission("evo.admin")) {
-//                player.sendMessage(S.toPrefixRed("ä½ æ²¡æœ‰æƒé™"));
-//                return true;
-//            }
-            if (args.length < 1) {
-                return true;
-            }
-            if (args[0].equalsIgnoreCase("set") && args.length >= 3) {
-                return true;
-            }
-
+            new TaskGUI(player).open(player);
             return true;
         }
         return false;

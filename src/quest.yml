@@ -12,7 +12,8 @@ a:
       num: 5
     '3':
       type: item
-      item: DIAMOND
+      item: WOOL
+      data: 2
       num: 5
     '4':
       type: item

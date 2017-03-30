@@ -1,5 +1,6 @@
 package cc.isotopestudio.bookquest;
 
+import cc.isotopestudio.bookquest.command.CommandQuest;
 import cc.isotopestudio.bookquest.task.UpdateConfigTask;
 import cc.isotopestudio.bookquest.util.PluginFile;
 import org.bukkit.ChatColor;
@@ -11,7 +12,7 @@ public class BookQuest extends JavaPlugin {
 
     private static final String pluginName = "BookQuest";
     public static final String prefix = (new StringBuilder()).append(ChatColor.GOLD).append(ChatColor.BOLD).append("[")
-            .append("浠诲姟").append("]").append(ChatColor.RED).toString();
+            .append("任务").append("]").append(ChatColor.RED).toString();
 
     public PluginFile config;
     public PluginFile questFile;
@@ -21,17 +22,21 @@ public class BookQuest extends JavaPlugin {
         plugin = this;
 
         config = new PluginFile(this, "config.yml", "config.yml");
+        questFile = new PluginFile(this,"quest.yml","quest.yml");
+        questFile.setEditable(false);
+
+        this.getCommand("quest").setExecutor(new CommandQuest());
 
         new UpdateConfigTask().runTask(this);
 
-        getLogger().info(pluginName + "鎴愬姛鍔犺浇!");
-        getLogger().info(pluginName + "鐢盜SOTOPE Studio鍒朵綔!");
+        getLogger().info(pluginName + "成功加载!");
+        getLogger().info(pluginName + "由ISOTOPE Studio制作!");
         getLogger().info("http://isotopestudio.cc");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info(pluginName + "鎴愬姛鍗歌浇!");
+        getLogger().info(pluginName + "成功卸载!");
     }
 
 }
