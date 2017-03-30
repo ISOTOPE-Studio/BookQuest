@@ -1,8 +1,11 @@
 package cc.isotopestudio.bookquest;
 
 import cc.isotopestudio.bookquest.command.CommandQuest;
+import cc.isotopestudio.bookquest.listener.TaskListener;
+import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.task.UpdateConfigTask;
 import cc.isotopestudio.bookquest.util.PluginFile;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,10 +25,17 @@ public class BookQuest extends JavaPlugin {
         plugin = this;
 
         config = new PluginFile(this, "config.yml", "config.yml");
-        questFile = new PluginFile(this,"quest.yml","quest.yml");
+        questFile = new PluginFile(this, "quest.yml", "quest.yml");
         questFile.setEditable(false);
 
+        if (!SqlManager.init()) {
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
+
         this.getCommand("quest").setExecutor(new CommandQuest());
+
+        Bukkit.getPluginManager().registerEvents(new TaskListener(), this);
 
         new UpdateConfigTask().runTask(this);
 

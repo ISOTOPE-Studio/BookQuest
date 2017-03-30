@@ -90,18 +90,8 @@ public class UpdateConfigTask extends BukkitRunnable {
             String limit = null;
             if (section.isSet("limit")) {
                 limit = section.getString("limit");
-                if (limit.equalsIgnoreCase("daily")) {
-
-                } else if (limit.endsWith("h")) {
-
-                } else {
-
-                }
-
             }
-
-            tasks.put(taskName, new Task(displayName, goals, rewards, limit));
-
+            tasks.put(taskName, new Task(taskName, displayName, goals, rewards, limit));
         }
 
         System.out.println(tasks);
