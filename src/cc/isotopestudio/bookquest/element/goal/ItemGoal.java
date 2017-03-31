@@ -5,11 +5,12 @@ package cc.isotopestudio.bookquest.element.goal;
  */
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public class ItemGoal extends Goal {
 
     private final Material type;
-    private String name;
+    private String name = null;
     private byte data = 0;
 
     public ItemGoal(int num, Material type) {
@@ -23,6 +24,19 @@ public class ItemGoal extends Goal {
 
     public void setData(byte data) {
         this.data = data;
+    }
+
+    @Override
+    public String getInfo() {
+        return (name == null ? type.name() : name) + (data == 0 ? "" : ":" + data)
+                + " ¡Á" + num;
+    }
+
+    public boolean isItem(ItemStack item) {
+        return item.getType() == type
+                && item.getDurability() == data
+                && !(name != null && item.hasItemMeta()
+                && item.getItemMeta().getDisplayName().equals(name));
     }
 
     @Override

@@ -28,6 +28,8 @@ a:
       num: 10
   rewards:
   - "give <player> diamond 1"
+  rewardsinfo:
+  - "&5获得钻石"
   # 每日一次
   limit: "daily"
   # 五次

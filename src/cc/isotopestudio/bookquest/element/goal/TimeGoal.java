@@ -11,6 +11,11 @@ public class TimeGoal extends Goal {
     }
 
     @Override
+    public String getInfo() {
+        return num +" ∑÷÷”";
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("TimeGoal{");
         sb.append("num=").append(num);

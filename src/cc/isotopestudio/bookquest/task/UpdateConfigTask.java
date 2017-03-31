@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static cc.isotopestudio.bookquest.BookQuest.plugin;
 import static cc.isotopestudio.bookquest.element.Task.tasks;
@@ -86,12 +87,14 @@ public class UpdateConfigTask extends BukkitRunnable {
                 continue;
             }
             List<String> rewards = section.getStringList("rewards");
+            List<String> rewardsinfo = section.getStringList("rewardsinfo")
+                    .stream().map(UpdateConfigTask::s).collect(Collectors.toList());
 
             String limit = null;
             if (section.isSet("limit")) {
                 limit = section.getString("limit");
             }
-            tasks.put(taskName, new Task(taskName, displayName, goals, rewards, limit));
+            tasks.put(taskName, new Task(taskName, displayName, goals, rewards, rewardsinfo, limit));
         }
 
         System.out.println(tasks);

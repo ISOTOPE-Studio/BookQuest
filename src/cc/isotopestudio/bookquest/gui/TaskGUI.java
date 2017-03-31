@@ -14,10 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class TaskGUI extends GUI {
@@ -25,15 +22,17 @@ public class TaskGUI extends GUI {
     private Map<Integer, String> slotIDMap = new HashMap<>();
 
     public TaskGUI(Player player) {
-        super(S.toBoldGold("加入游戏") + "[" + player.getName() + "]", 4 * 9, player);
+        super(S.toBoldGold("任务") + "[" + player.getName() + "]", 4 * 9, player);
         this.page = 0;
         int pos = 0;
         for (Task task : Task.tasks.values()) {
             if (pos >= size) break;
             slotIDMap.put(pos, task.getName());
-            ItemStack item = new ItemStack(Material.WOOL);
+            ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
             ItemMeta meta = item.getItemMeta();
-            List<String> lore = new ArrayList<>();
+            meta.setDisplayName(task.getDisplayName());
+            List<String> lore = task.getLore();
+            lore.add(task.isAvailable(player) ? S.toItalicYellow("单击接受任务") : S.toRed("无法接受"));
             meta.setLore(lore);
             item.setItemMeta(meta);
             setOption(pos, item);
@@ -55,7 +54,23 @@ public class TaskGUI extends GUI {
                 if (task == null) {
                     player.sendMessage(S.toPrefixRed("任务不存在"));
                 } else {
-
+                    if (task.isAvailable(player)) {
+                        ItemStack bookItem = task.getBookItem();
+                        final boolean[] exist = {false};
+                        Arrays.stream(player.getInventory().getContents())
+                                .filter(Objects::nonNull).forEach(item -> {
+                            if (task.isBookItem(item))
+                                exist[0] = true;
+                        });
+                        if (exist[0]) {
+                            player.sendMessage(S.toPrefixRed("你现在已经领取了这个任务"));
+                        } else {
+                            player.getInventory().addItem(bookItem);
+                            player.sendMessage(S.toPrefixGreen("成功领取任务"));
+                        }
+                    } else {
+                        player.sendMessage(S.toPrefixRed("你无法领取这个任务"));
+                    }
                 }
                 player.closeInventory();
             }

@@ -11,4 +11,10 @@ public abstract class Goal {
     public Goal(int num) {
         this.num = num;
     }
+
+    public int getNum() {
+        return num;
+    }
+
+    public abstract String getInfo();
 }
