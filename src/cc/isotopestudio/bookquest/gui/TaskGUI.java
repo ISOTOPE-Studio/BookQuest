@@ -28,10 +28,10 @@ public class TaskGUI extends GUI {
         for (Task task : Task.tasks.values()) {
             if (pos >= size) break;
             slotIDMap.put(pos, task.getName());
-            ItemStack item = new ItemStack(Material.WRITTEN_BOOK);
+            ItemStack item = task.getDisplayItem();
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(task.getDisplayName());
-            List<String> lore = task.getLore();
+            List<String> lore = meta.getLore();
             lore.add(task.isAvailable(player) ? S.toItalicYellow("单击接受任务") : S.toRed("无法接受"));
             meta.setLore(lore);
             item.setItemMeta(meta);
@@ -55,7 +55,6 @@ public class TaskGUI extends GUI {
                     player.sendMessage(S.toPrefixRed("任务不存在"));
                 } else {
                     if (task.isAvailable(player)) {
-                        ItemStack bookItem = task.getBookItem();
                         final boolean[] exist = {false};
                         Arrays.stream(player.getInventory().getContents())
                                 .filter(Objects::nonNull).forEach(item -> {
@@ -65,7 +64,7 @@ public class TaskGUI extends GUI {
                         if (exist[0]) {
                             player.sendMessage(S.toPrefixRed("你现在已经领取了这个任务"));
                         } else {
-                            player.getInventory().addItem(bookItem);
+                            player.getInventory().addItem(task.getBookItem());
                             player.sendMessage(S.toPrefixGreen("成功领取任务"));
                         }
                     } else {

@@ -3,10 +3,13 @@ package cc.isotopestudio.bookquest;
 import cc.isotopestudio.bookquest.command.CommandQuest;
 import cc.isotopestudio.bookquest.listener.TaskListener;
 import cc.isotopestudio.bookquest.sql.SqlManager;
+import cc.isotopestudio.bookquest.task.OnlineTimeTask;
 import cc.isotopestudio.bookquest.task.UpdateConfigTask;
 import cc.isotopestudio.bookquest.util.PluginFile;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BookQuest extends JavaPlugin {
@@ -20,9 +23,19 @@ public class BookQuest extends JavaPlugin {
     public PluginFile config;
     public PluginFile questFile;
 
+    // Vault
+    public static Economy econ = null;
+
     @Override
     public void onEnable() {
         plugin = this;
+
+        if (!setupEconomy()) {
+            getLogger().severe(pluginName + "无法加载!");
+            getLogger().severe("Vault未安装！");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         config = new PluginFile(this, "config.yml", "config.yml");
         questFile = new PluginFile(this, "quest.yml", "quest.yml");
@@ -38,6 +51,7 @@ public class BookQuest extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new TaskListener(), this);
 
         new UpdateConfigTask().runTask(this);
+        new OnlineTimeTask().runTaskTimer(this, 60, 20);
 
         getLogger().info(pluginName + "成功加载!");
         getLogger().info(pluginName + "由ISOTOPE Studio制作!");
@@ -49,4 +63,16 @@ public class BookQuest extends JavaPlugin {
         getLogger().info(pluginName + "成功卸载!");
     }
 
+    // Vault API
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
 }

@@ -21,9 +21,17 @@ public class MobGoal extends Goal {
         this.name = name;
     }
 
+    public EntityType getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String getInfo() {
-        return (name == null ? type.name() : name + "(" + type.name() + ")") + " ¡Á" + num;
+        return (name == null ? type.name() : name + "(" + type.name() + ")");
     }
 
     @Override

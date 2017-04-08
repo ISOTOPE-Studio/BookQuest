@@ -26,10 +26,21 @@ public class ItemGoal extends Goal {
         this.data = data;
     }
 
+    public Material getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public byte getData() {
+        return data;
+    }
+
     @Override
     public String getInfo() {
-        return (name == null ? type.name() : name) + (data == 0 ? "" : ":" + data)
-                + " ¡Á" + num;
+        return (name == null ? type.name() : name) + (data == 0 ? "" : ":" + data);
     }
 
     public boolean isItem(ItemStack item) {

@@ -27,7 +27,7 @@ public class Task {
     private final List<String> rewards;
     private final String limit;
 
-    private final List<String> lore = new ArrayList<>();
+    private final ItemStack displayItem = new ItemStack(Material.WRITTEN_BOOK);
     private final ItemStack bookItem = new ItemStack(Material.WRITTEN_BOOK);
 
     public Task(String name, String displayName, List<Goal> goals,
@@ -39,44 +39,68 @@ public class Task {
         List<String> rewardsinfo1 = rewardsinfo;
         this.limit = limit;
 
-        lore.add(S.toBoldGold("任务目标: "));
+        List<String> dlore = new ArrayList<>();
+        List<String> blore = new ArrayList<>();
+        dlore.add(S.toBoldGold("任务目标: "));
+        blore.add(S.toBoldGold("任务目标: "));
         int i = 1;
         for (Goal goal : goals) {
             if (goal instanceof ItemGoal) {
                 ItemGoal itemGoal = (ItemGoal) goal;
-                lore.add(S.toYellow(i + ": " + "收集 " + itemGoal.getInfo()));
+                dlore.add(S.toYellow(i + ": " + "收集 " + itemGoal.getInfo() + " × " + itemGoal.getNum()));
+                blore.add(S.toYellow(i + ": " + "收集 " + itemGoal.getInfo()) + " "
+                        + S.toAqua("0") + S.toYellow(" / " + itemGoal.getNum()));
             } else if (goal instanceof MobGoal) {
                 MobGoal mobGoal = (MobGoal) goal;
-                lore.add(S.toYellow(i + ": " + "杀死 " + mobGoal.getInfo()));
+                dlore.add(S.toYellow(i + ": " + "杀死 " + mobGoal.getInfo() + " × " + mobGoal.getNum()));
+                blore.add(S.toYellow(i + ": " + "杀死 " + mobGoal.getInfo()) + " "
+                        + S.toAqua("0") + S.toYellow(" / " + mobGoal.getNum()));
             } else if (goal instanceof MoneyGoal) {
                 MoneyGoal moneyGoal = (MoneyGoal) goal;
-                lore.add(S.toYellow(i + ": " + "金币 " + moneyGoal.getInfo()));
+                dlore.add(S.toYellow(i + ": " + "金币 " + moneyGoal.getInfo()));
+                blore.add(S.toYellow(i + ": " + "金币 ")
+                        + S.toAqua("0") + S.toYellow(" / " + moneyGoal.getInfo()) + " (点击物品提交金币)");
             } else if (goal instanceof TimeGoal) {
                 TimeGoal timeGoal = (TimeGoal) goal;
-                lore.add(S.toYellow(i + ": " + "在线 " + timeGoal.getInfo()));
+                dlore.add(S.toYellow(i + ": " + "在线 " + timeGoal.getInfo()));
+                blore.add(S.toYellow(i + ": " + "在线 ")
+                        + S.toAqua("0") + S.toYellow(" / " + timeGoal.getInfo()));
             }
             i++;
         }
-        lore.add(S.toBoldGold("任务奖励"));
-        lore.addAll(rewardsinfo);
-        lore.add(S.toGray("————————————"));
+        dlore.add(S.toBoldGold("任务奖励"));
+        dlore.addAll(rewardsinfo);
+        dlore.add(S.toGray("————————————"));
+        blore.add(S.toBoldGold("任务奖励"));
+        blore.addAll(rewardsinfo);
+        blore.add(S.toGray("————————————"));
         if (limit != null) {
             if (limit.equalsIgnoreCase("daily")) {
-                lore.add(S.toGreen("每日任务"));
+                dlore.add(S.toGreen("每日任务"));
+                blore.add(S.toGreen("每日任务"));
             } else if (limit.endsWith("h")) {
-                lore.add(S.toGreen("每 " + limit.replaceAll("h", "小时")));
+                dlore.add(S.toGreen("每 " + limit.replaceAll("h", "小时")));
+                blore.add(S.toGreen("每 " + limit.replaceAll("h", "小时")));
             } else {
-                lore.add(S.toGreen("可做 " + limit + " 次"));
+                dlore.add(S.toGreen("可做 " + limit + " 次"));
+                blore.add(S.toGreen("可做 " + limit + " 次"));
             }
         } else {
-            lore.add(S.toGreen("无限制"));
+            dlore.add(S.toGreen("无限制"));
+            blore.add(S.toGreen("无限制"));
         }
-        BookMeta meta = (BookMeta) bookItem.getItemMeta();
-        meta.setAuthor(BookQuest.prefix);
-        meta.addPage("");
-        meta.setDisplayName(displayName);
-        meta.setLore(getLore());
-        bookItem.setItemMeta(meta);
+        BookMeta dmeta = (BookMeta) displayItem.getItemMeta();
+        dmeta.setAuthor(BookQuest.prefix);
+        dmeta.addPage("");
+        dmeta.setDisplayName(displayName);
+        dmeta.setLore(dlore);
+        displayItem.setItemMeta(dmeta);
+        BookMeta bmeta = (BookMeta) displayItem.getItemMeta();
+        bmeta.setAuthor(BookQuest.prefix);
+        bmeta.addPage("");
+        bmeta.setDisplayName(displayName);
+        bmeta.setLore(blore);
+        bookItem.setItemMeta(bmeta);
     }
 
     public String getName() {
@@ -113,8 +137,8 @@ public class Task {
         }
     }
 
-    public List<String> getLore() {
-        return new ArrayList<>(lore);
+    public ItemStack getDisplayItem() {
+        return displayItem.clone();
     }
 
     public ItemStack getBookItem() {
@@ -122,9 +146,10 @@ public class Task {
     }
 
     public boolean isBookItem(ItemStack item) {
-        return item.hasItemMeta() && item.getItemMeta().hasDisplayName()
+        return item != null && item.getType() == Material.WRITTEN_BOOK &&
+                item.hasItemMeta() && item.getItemMeta().hasDisplayName()
                 && item.getItemMeta().getDisplayName()
-                .equals(bookItem.getItemMeta().getDisplayName());
+                .equals(displayItem.getItemMeta().getDisplayName());
     }
 
     @Override
