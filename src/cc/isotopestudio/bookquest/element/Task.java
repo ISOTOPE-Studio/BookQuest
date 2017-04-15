@@ -9,6 +9,7 @@ import cc.isotopestudio.bookquest.element.goal.*;
 import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -150,6 +151,21 @@ public class Task {
                 item.hasItemMeta() && item.getItemMeta().hasDisplayName()
                 && item.getItemMeta().getDisplayName()
                 .equals(displayItem.getItemMeta().getDisplayName());
+    }
+
+    public boolean isFinished(ItemStack book) {
+        boolean b = false;
+        int count = 0;
+        for (String s : book.getItemMeta().getLore()) {
+            if (s.contains("任务目标")) b = true;
+            if (s.contains("任务奖励")) break;
+            if (b) {
+                if (s.contains(String.valueOf(ChatColor.GREEN))) {
+                    count++;
+                }
+            }
+        }
+        return count == goals.size();
     }
 
     @Override
