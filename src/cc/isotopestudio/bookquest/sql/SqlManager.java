@@ -29,15 +29,18 @@ public abstract class SqlManager {
         try {
             c = mySQL.openConnection();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
             plugin.getLogger().info("数据库出错 Error1");
             return false;
         } catch (SQLException e) {
+            e.printStackTrace();
             plugin.getLogger().info("数据库出错 Error2");
             return false;
         }
         try {
             s = c.createStatement();
         } catch (SQLException e1) {
+            e1.printStackTrace();
             plugin.getLogger().info("数据库出错 Error3");
             return false;
         }

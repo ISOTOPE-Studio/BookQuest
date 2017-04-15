@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -39,6 +40,7 @@ public class TaskListener implements Listener {
 
     @EventHandler
     public void on(InventoryClickEvent event) {
+        if (event.getClickedInventory() == null) return;
         boolean allow = false;
         switch (event.getClickedInventory().getType()) {
             case CHEST:
@@ -109,7 +111,10 @@ public class TaskListener implements Listener {
             }
         }
         if (task == null) return;
-        if (event.getInventory() instanceof PlayerInventory) {
+        System.out.println(event.getClickedInventory().getName());
+        System.out.println(event.getClickedInventory().getTitle());
+        System.out.println(event.getClickedInventory().getSize());
+        if (event.getClickedInventory() instanceof PlayerInventory) {
             // MoneyGoal
             int num = -1;
             for (Goal goal : task.getGoals()) {
@@ -267,28 +272,34 @@ public class TaskListener implements Listener {
                     }
                     if (goal == null) return;
                     int num = goal.getNum();
-                    int picked = pick.getAmount();
+
+                    int slot = -1;
+                    for (int j = 0; j < player.getInventory().getContents().length; j++) {
+                        if (player.getInventory().getContents()[j].isSimilar(pick)) {
+                            slot = j;
+                            break;
+                        }
+                    }
+                    if (slot < 0) return;
+                    ItemStack pickedInv = player.getInventory().getItem(slot);
+
+                    int picked = pickedInv.getAmount();
+                    if (picked < num) {
+                        return;
+                    }
+
                     ItemMeta meta = item.getItemMeta();
                     List<String> lore = meta.getLore();
                     int index = 0;
-
                     for (String s : lore) {
                         if (s.contains("收集") && s.contains(goal.getInfo()) && s.contains(String.valueOf(ChatColor.AQUA))) {
-                            if (picked >= num) {
-                                lore.set(index, s.replace("" + ChatColor.AQUA + 0, "" + ChatColor.GREEN + num));
-                                meta.setLore(lore);
-                                item.setItemMeta(meta);
-                                player.getInventory().setItem(i, item);
-                                pick.setAmount(picked - num);
-                                int slot = -1;
-                                for (int j = 0; j < player.getInventory().getContents().length; j++) {
-                                    if (player.getInventory().getContents()[j].isSimilar(pick)) {
-                                        slot = j;
-                                        break;
-                                    }
-                                }
-                                player.getInventory().setItem(slot, pick);
-                            }
+                            lore.set(index, s.replace("" + ChatColor.AQUA + 0, "" + ChatColor.GREEN + num));
+                            meta.setLore(lore);
+                            item.setItemMeta(meta);
+                            player.getInventory().setItem(i, item);
+                            pick.setAmount(picked - num);
+                            player.getInventory().setItem(slot, pick);
+                            player.sendMessage(S.toPrefixGreen(goal.getInfo() + "已完成"));
                             return;
                         }
                         index++;
@@ -308,6 +319,18 @@ public class TaskListener implements Listener {
             if (task1.isBookItem(item)) {
                 event.getItemDrop().remove();
                 event.getPlayer().sendMessage(S.toPrefixRed("任务失败"));
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        for (ItemStack item : event.getDrops()) {
+            for (Task task1 : tasks.values()) {
+                if (task1.isBookItem(item)) {
+                    event.getDrops().remove(item);
+                    break;
+                }
             }
         }
     }
