@@ -3,6 +3,7 @@ package cc.isotopestudio.bookquest;
 import cc.isotopestudio.bookquest.command.CommandQuest;
 import cc.isotopestudio.bookquest.listener.TaskListener;
 import cc.isotopestudio.bookquest.sql.SqlManager;
+import cc.isotopestudio.bookquest.task.MissionFailureTask;
 import cc.isotopestudio.bookquest.task.OnlineTimeTask;
 import cc.isotopestudio.bookquest.task.UpdateConfigTask;
 import cc.isotopestudio.bookquest.util.PluginFile;
@@ -52,6 +53,7 @@ public class BookQuest extends JavaPlugin {
 
         new UpdateConfigTask().runTask(this);
         new OnlineTimeTask().runTaskTimer(this, 60, 20 * 60);
+        new MissionFailureTask().runTaskTimer(this, 60, 20);
 
         getLogger().info(pluginName + "成功加载!");
         getLogger().info(pluginName + "由ISOTOPE Studio制作!");

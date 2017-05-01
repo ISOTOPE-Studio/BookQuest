@@ -10,6 +10,7 @@ import cc.isotopestudio.bookquest.element.goal.ItemGoal;
 import cc.isotopestudio.bookquest.element.goal.MobGoal;
 import cc.isotopestudio.bookquest.element.goal.MoneyGoal;
 import cc.isotopestudio.bookquest.sql.SqlManager;
+import cc.isotopestudio.bookquest.task.MissionFailureTask;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -106,6 +107,7 @@ public class TaskListener implements Listener {
                     Player player = event.getPlayer();
                     for (int j = 0; j < player.getInventory().getContents().length; j++) {
                         if (player.getInventory().getContents()[j].equals(item)) {
+                            MissionFailureTask.playerTaskMap.get(player).remove(task);
                             player.getInventory().setItem(j, null);
                             player.sendMessage(S.toPrefixGreen("任务完成"));
                             break;
@@ -259,20 +261,6 @@ public class TaskListener implements Listener {
     }
 
     @EventHandler
-    public void onThrowItem(PlayerDropItemEvent event) {
-        ItemStack item = event.getItemDrop().getItemStack();
-        if (!(item != null && item.getType() == Material.WRITTEN_BOOK)) {
-            return;
-        }
-        for (Task task1 : tasks.values()) {
-            if (task1.isBookItem(item)) {
-                event.getItemDrop().remove();
-                event.getPlayer().sendMessage(S.toPrefixRed("任务失败"));
-            }
-        }
-    }
-
-    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         for (ItemStack item : event.getDrops()) {
             for (Task task1 : tasks.values()) {
@@ -307,6 +295,7 @@ public class TaskListener implements Listener {
         for (Task task : tasks.values()) {
             if (task.isBookItem(event.getItem().getItemStack())) {
                 event.setCancelled(true);
+                event.getItem().remove();
             }
         }
     }

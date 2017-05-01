@@ -44,6 +44,8 @@ public class Task {
         blore.add(S.toGray("-------------------------"));
         dlore.addAll(taskInfo);
         blore.addAll(taskInfo);
+        dlore.add(S.toGray("-------------------------"));
+        blore.add(S.toGray("-------------------------"));
         dlore.add(S.toBoldGold("任务目标: "));
         blore.add(S.toBoldGold("任务目标: "));
         for (Goal goal : goals) {
