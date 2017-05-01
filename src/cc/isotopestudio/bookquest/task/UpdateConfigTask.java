@@ -28,7 +28,8 @@ public class UpdateConfigTask extends BukkitRunnable {
         for (String taskName : plugin.questFile.getKeys(false)) {
             ConfigurationSection section = plugin.questFile.getConfigurationSection(taskName);
             String displayName = s(section.getString("name"));
-
+            List<String> taskInfo = section.getStringList("info")
+                    .stream().map(UpdateConfigTask::s).collect(Collectors.toList());
             ConfigurationSection goalsConfig = section.getConfigurationSection("goal");
             if (goalsConfig == null) {
                 System.out.println("ERROR GOAL SETTINGS");
@@ -40,6 +41,7 @@ public class UpdateConfigTask extends BukkitRunnable {
                 ConfigurationSection goalSection = goalsConfig.getConfigurationSection(goalName);
                 String goalType = goalSection.getString("type");
                 int num = goalSection.getInt("num");
+                String info = s(goalSection.getString("info"));
                 switch (goalType) {
                     case "mob":
                         EntityType etype;
@@ -51,7 +53,7 @@ public class UpdateConfigTask extends BukkitRunnable {
                         }
                         String mobName = goalSection.getString("name");
                         goal = mobName == null ?
-                                new MobGoal(num, etype) : new MobGoal(num, etype, s(mobName));
+                                new MobGoal(num, info, etype) : new MobGoal(num, info, etype, s(mobName));
                         break;
                     case "item":
                         Material mtype;
@@ -61,7 +63,7 @@ public class UpdateConfigTask extends BukkitRunnable {
                             System.out.println("ERROR ITEM TYPE");
                             continue taskLoop;
                         }
-                        goal = new ItemGoal(num, mtype);
+                        goal = new ItemGoal(num, info, mtype);
                         if (goalSection.isSet("name")) {
                             ((ItemGoal) goal).setName(s(goalSection.getString("name")));
                         }
@@ -70,10 +72,10 @@ public class UpdateConfigTask extends BukkitRunnable {
                         }
                         break;
                     case "money":
-                        goal = new MoneyGoal(num);
+                        goal = new MoneyGoal(num, info);
                         break;
                     case "time":
-                        goal = new TimeGoal(num);
+                        goal = new TimeGoal(num, info);
                         break;
                     default:
                         System.out.println("ERROR GOAL TYPE");
@@ -94,7 +96,7 @@ public class UpdateConfigTask extends BukkitRunnable {
             if (section.isSet("limit")) {
                 limit = section.getString("limit");
             }
-            tasks.put(taskName, new Task(taskName, displayName, goals, rewards, rewardsinfo, limit));
+            tasks.put(taskName, new Task(taskName, displayName, taskInfo, goals, rewards, rewardsinfo, limit));
         }
 
         System.out.println(tasks);

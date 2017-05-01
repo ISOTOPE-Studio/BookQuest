@@ -1,31 +1,40 @@
 a:
   name: "&3任务名字"
+  info:
+  - "&1任务介绍"
+  - "&2任务介绍"
   goal:
     '1':
       type: mob
       mob: ZOMBIE
       num: 5
+      info: "&3杀死 5僵尸"
     '2':
       type: mob
       mob: ZOMBIE
       name: "垃圾僵尸"
       num: 5
+      info: "&3杀死 5垃圾僵尸"
     '3':
       type: item
       item: WOOL
       data: 2
       num: 5
+      info: "&352羊毛"
     '4':
       type: item
       item: DIAMOND
       name: "假的钻石"
       num: 5
+      info: "&3捡到 5假的钻石"
     '5':
       type: money
       num: 500
+      info: "&3抢劫500块"
     '6':
       type: time
       num: 10
+      info: "&310分钟"
   rewards:
   - "give <player> diamond 1"
   rewardsinfo:

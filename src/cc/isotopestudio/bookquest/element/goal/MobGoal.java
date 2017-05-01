@@ -11,13 +11,13 @@ public class MobGoal extends Goal {
     private final EntityType type;
     private String name = null;
 
-    public MobGoal(int num, EntityType type) {
-        super(num);
+    public MobGoal(int num, String intro, EntityType type) {
+        super(num, intro);
         this.type = type;
     }
 
-    public MobGoal(int num, EntityType type, String name) {
-        this(num, type);
+    public MobGoal(int num, String intro, EntityType type, String name) {
+        this(num, intro, type);
         this.name = name;
     }
 
@@ -27,11 +27,6 @@ public class MobGoal extends Goal {
 
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getInfo() {
-        return (name == null ? type.name() : name + "(" + type.name() + ")");
     }
 
     @Override

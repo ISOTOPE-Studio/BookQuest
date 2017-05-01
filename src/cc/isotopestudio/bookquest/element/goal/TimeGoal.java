@@ -6,13 +6,8 @@ package cc.isotopestudio.bookquest.element.goal;
 
 public class TimeGoal extends Goal {
 
-    public TimeGoal(int num) {
-        super(num);
-    }
-
-    @Override
-    public String getInfo() {
-        return num +" ∑÷÷”";
+    public TimeGoal(int num, String intro) {
+        super(num, intro);
     }
 
     @Override

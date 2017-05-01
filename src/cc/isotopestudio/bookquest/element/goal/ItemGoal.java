@@ -13,8 +13,8 @@ public class ItemGoal extends Goal {
     private String name = null;
     private byte data = 0;
 
-    public ItemGoal(int num, Material type) {
-        super(num);
+    public ItemGoal(int num, String intro, Material type) {
+        super(num, intro);
         this.type = type;
     }
 
@@ -36,11 +36,6 @@ public class ItemGoal extends Goal {
 
     public byte getData() {
         return data;
-    }
-
-    @Override
-    public String getInfo() {
-        return (name == null ? type.name() : name) + (data == 0 ? "" : ":" + data);
     }
 
     public boolean isItem(ItemStack item) {

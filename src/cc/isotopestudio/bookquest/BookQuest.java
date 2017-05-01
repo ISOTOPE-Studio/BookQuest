@@ -51,7 +51,7 @@ public class BookQuest extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new TaskListener(), this);
 
         new UpdateConfigTask().runTask(this);
-        new OnlineTimeTask().runTaskTimer(this, 60, 20);
+        new OnlineTimeTask().runTaskTimer(this, 60, 20 * 60);
 
         getLogger().info(pluginName + "成功加载!");
         getLogger().info(pluginName + "由ISOTOPE Studio制作!");

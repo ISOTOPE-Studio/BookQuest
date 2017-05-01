@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="spigot-api-1.10.2-R0.1-SNAPSHOT-shaded" level="application" />
     <orderEntry type="library" name="Vault" level="application" />
+    <orderEntry type="library" name="spigot-api-1.9.2-R0.1-SNAPSHOT-shaded" level="application" />
   </component>
 </module>

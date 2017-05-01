@@ -5,11 +5,10 @@ package cc.isotopestudio.bookquest.element;
  */
 
 import cc.isotopestudio.bookquest.BookQuest;
-import cc.isotopestudio.bookquest.element.goal.*;
+import cc.isotopestudio.bookquest.element.goal.Goal;
 import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -31,48 +30,30 @@ public class Task {
     private final ItemStack displayItem = new ItemStack(Material.WRITTEN_BOOK);
     private final ItemStack bookItem = new ItemStack(Material.WRITTEN_BOOK);
 
-    public Task(String name, String displayName, List<Goal> goals,
+    public Task(String name, String displayName, List<String> taskInfo, List<Goal> goals,
                 List<String> rewards, List<String> rewardsinfo, String limit) {
         this.name = name;
         this.displayName = displayName;
         this.goals = goals;
         this.rewards = rewards;
-        List<String> rewardsinfo1 = rewardsinfo;
         this.limit = limit;
 
         List<String> dlore = new ArrayList<>();
         List<String> blore = new ArrayList<>();
+        dlore.add(S.toGray("-------------------------"));
+        blore.add(S.toGray("-------------------------"));
+        dlore.addAll(taskInfo);
+        blore.addAll(taskInfo);
         dlore.add(S.toBoldGold("任务目标: "));
         blore.add(S.toBoldGold("任务目标: "));
-        int i = 1;
         for (Goal goal : goals) {
-            if (goal instanceof ItemGoal) {
-                ItemGoal itemGoal = (ItemGoal) goal;
-                dlore.add(S.toYellow(i + ": " + "收集 " + itemGoal.getInfo() + " × " + itemGoal.getNum()));
-                blore.add(S.toYellow(i + ": " + "收集 " + itemGoal.getInfo()) + " "
-                        + S.toAqua("0") + S.toYellow(" / " + itemGoal.getNum()));
-            } else if (goal instanceof MobGoal) {
-                MobGoal mobGoal = (MobGoal) goal;
-                dlore.add(S.toYellow(i + ": " + "杀死 " + mobGoal.getInfo() + " × " + mobGoal.getNum()));
-                blore.add(S.toYellow(i + ": " + "杀死 " + mobGoal.getInfo()) + " "
-                        + S.toAqua("0") + S.toYellow(" / " + mobGoal.getNum()));
-            } else if (goal instanceof MoneyGoal) {
-                MoneyGoal moneyGoal = (MoneyGoal) goal;
-                dlore.add(S.toYellow(i + ": " + "金币 " + moneyGoal.getInfo()));
-                blore.add(S.toYellow(i + ": " + "金币 ")
-                        + S.toAqua("0") + S.toYellow(" / " + moneyGoal.getInfo()) + " (点击物品提交金币)");
-            } else if (goal instanceof TimeGoal) {
-                TimeGoal timeGoal = (TimeGoal) goal;
-                dlore.add(S.toYellow(i + ": " + "在线 " + timeGoal.getInfo()));
-                blore.add(S.toYellow(i + ": " + "在线 ")
-                        + S.toAqua("0") + S.toYellow(" / " + timeGoal.getInfo()));
-            }
-            i++;
+            dlore.add(goal.getInfo());
+            blore.add(goal.getInfo() + " " + S.toAqua("0") + S.toYellow(" / " + goal.getNum()));
         }
-        dlore.add(S.toBoldGold("任务奖励"));
+        dlore.add(S.toBoldGold("任务奖励: "));
         dlore.addAll(rewardsinfo);
         dlore.add(S.toGray("————————————"));
-        blore.add(S.toBoldGold("任务奖励"));
+        blore.add(S.toBoldGold("任务奖励: "));
         blore.addAll(rewardsinfo);
         blore.add(S.toGray("————————————"));
         if (limit != null) {
@@ -90,6 +71,8 @@ public class Task {
             dlore.add(S.toGreen("无限制"));
             blore.add(S.toGreen("无限制"));
         }
+        dlore.add(S.toGray("-------------------------"));
+        blore.add(S.toGray("-------------------------"));
         BookMeta dmeta = (BookMeta) displayItem.getItemMeta();
         dmeta.setAuthor(BookQuest.prefix);
         dmeta.addPage("");
@@ -160,7 +143,7 @@ public class Task {
             if (s.contains("任务目标")) b = true;
             if (s.contains("任务奖励")) break;
             if (b) {
-                if (s.contains(String.valueOf(ChatColor.GREEN))) {
+                if (s.contains("已完成")) {
                     count++;
                 }
             }

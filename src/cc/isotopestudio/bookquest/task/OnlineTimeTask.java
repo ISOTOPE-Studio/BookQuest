@@ -7,6 +7,7 @@ package cc.isotopestudio.bookquest.task;
 import cc.isotopestudio.bookquest.element.Task;
 import cc.isotopestudio.bookquest.element.goal.Goal;
 import cc.isotopestudio.bookquest.element.goal.TimeGoal;
+import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -41,24 +42,27 @@ public class OnlineTimeTask extends BukkitRunnable {
                 ItemMeta meta = item.getItemMeta();
                 List<String> lore = meta.getLore();
                 int num = -1;
-                for (Goal goal : task.getGoals()) {
-                    if (goal instanceof TimeGoal) {
-                        num = goal.getNum();
+                Goal goal = null;
+                for (Goal goal1 : task.getGoals()) {
+                    if (goal1 instanceof TimeGoal) {
+                        num = goal1.getNum();
+                        goal = goal1;
+                        break;
                     }
                 }
-                if (num == -1) continue;
+                if (goal == null) continue;
                 int index = 0;
                 for (String s : lore) {
-                    if (s.contains("在线")) {
+                    if (s.contains(goal.getInfo())) {
                         int a = s.indexOf(String.valueOf(ChatColor.AQUA));
                         if (a < 0) continue loop;
                         int b = s.indexOf(" /");
                         int time = Integer.parseInt(s.substring(a + 2, b - 4));
                         if (time != num) {
                             if (time + 1 == num) {
-                                lore.set(index, s.replace("" + ChatColor.AQUA + time, "" + ChatColor.GREEN + (time + 1)));
+                                lore.set(index, goal.getInfo() + " " + S.toGreen("已完成"));
                             } else {
-                                lore.set(index, s.replace("" + ChatColor.AQUA + time, "" + ChatColor.AQUA + (time + 1)));
+                                lore.set(index, s.replace("" + ChatColor.AQUA + time, "" + ChatColor.GREEN + (time + 1)));
                             }
                             meta.setLore(lore);
                             item.setItemMeta(meta);

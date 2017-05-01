@@ -13,7 +13,6 @@ import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,9 +20,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,60 +42,7 @@ public class TaskListener implements Listener {
     @EventHandler
     public void on(InventoryClickEvent event) {
         if (event.getClickedInventory() == null) return;
-        boolean allow = false;
-        switch (event.getClickedInventory().getType()) {
-            case CHEST:
-                break;
-            case DISPENSER:
-                break;
-            case DROPPER:
-                break;
-            case FURNACE:
-                break;
-            case WORKBENCH:
-                break;
-            case CRAFTING:
-                break;
-            case ENCHANTING:
-                break;
-            case BREWING:
-                break;
-            case PLAYER:
-                allow = true;
-                break;
-            case CREATIVE:
-                allow = true;
-                break;
-            case MERCHANT:
-                break;
-            case ENDER_CHEST:
-                break;
-            case ANVIL:
-                break;
-            case BEACON:
-                break;
-            case HOPPER:
-                break;
-        }
-        if (!allow) {
-            System.out.println("!allow");
-            ItemStack item = event.getCursor();
-            if (!(item != null && item.getType() == Material.WRITTEN_BOOK)) {
-                return;
-            }
-            Task task = null;
-            for (Task task1 : tasks.values()) {
-                if (task1.isBookItem(item)) {
-                    task = task1;
-                    break;
-                }
-            }
-            if (task == null) return;
-            event.setCursor(null);
-            HumanEntity player = event.getWhoClicked();
-            player.closeInventory();
-            player.sendMessage(S.toPrefixRed("任务失败"));
-        }
+
     }
 
     @EventHandler
@@ -111,9 +59,6 @@ public class TaskListener implements Listener {
             }
         }
         if (task == null) return;
-        System.out.println(event.getClickedInventory().getName());
-        System.out.println(event.getClickedInventory().getTitle());
-        System.out.println(event.getClickedInventory().getSize());
         if (event.getClickedInventory() instanceof PlayerInventory) {
             // MoneyGoal
             int num = -1;
@@ -127,19 +72,21 @@ public class TaskListener implements Listener {
             List<String> lore = meta.getLore();
             int index = 0;
             for (String s : lore) {
-                if (s.contains("金币") && s.contains(String.valueOf(ChatColor.AQUA))) {
-                    Player player = (Player) event.getWhoClicked();
-                    if (!econ.withdrawPlayer(player, num).transactionSuccess()) {
-                        player.sendMessage(S.toPrefixRed("金币不足"));
+                for (Goal goal : task.getGoals()) {
+                    if (goal instanceof MoneyGoal
+                            && s.contains(goal.getInfo()) && !s.contains("已完成")) {
+                        Player player = (Player) event.getWhoClicked();
+                        if (!econ.withdrawPlayer(player, num).transactionSuccess()) {
+                            player.sendMessage(S.toPrefixRed("金币不足"));
+                            return;
+                        }
+                        lore.set(index, goal.getInfo() + " " + S.toGreen("已完成"));
+                        meta.setLore(lore);
+                        item.setItemMeta(meta);
+                        player.getInventory().setItem(event.getSlot(), item);
+                        event.setCancelled(true);
                         return;
                     }
-                    lore.set(index, S.toYellow(s.substring(2, 3) + ": " + "金币 ")
-                            + S.toGreen("" + num) + S.toYellow(" / " + num));
-                    meta.setLore(lore);
-                    item.setItemMeta(meta);
-                    player.getInventory().setItem(event.getSlot(), item);
-                    event.setCancelled(true);
-                    return;
                 }
                 index++;
             }
@@ -209,16 +156,18 @@ public class TaskListener implements Listener {
             List<String> lore = meta.getLore();
             int index = 0;
             for (String s : lore) {
-                if (s.contains("杀死") && s.contains(goal.getInfo()) && s.contains(String.valueOf(ChatColor.AQUA))) {
+                if (s.contains(goal.getInfo()) && !s.contains("已完成")) {
                     int a = s.indexOf(String.valueOf(ChatColor.AQUA));
                     if (a < 0) return;
                     int b = s.indexOf(" /");
                     int killed = Integer.parseInt(s.substring(a + 2, b - 4));
                     if (killed != num) {
                         if (killed + 1 == num) {
-                            lore.set(index, s.replace("" + ChatColor.AQUA + killed, "" + ChatColor.GREEN + (killed + 1)));
+                            lore.set(index, goal.getInfo() + " " + S.toGreen("已完成"));
+                            player.sendMessage(S.toPrefixGreen(goal.getInfo() + "已完成"));
                         } else {
-                            lore.set(index, s.replace("" + ChatColor.AQUA + killed, "" + ChatColor.AQUA + (killed + 1)));
+                            lore.set(index, s.replace("" + ChatColor.AQUA + killed, "" + ChatColor.GREEN + (killed + 1)));
+                            player.sendMessage(S.toPrefixGreen(goal.getInfo() + " " + (killed + 1) + " / " + goal.getNum()));
                         }
                         meta.setLore(lore);
                         item.setItemMeta(meta);
@@ -292,8 +241,8 @@ public class TaskListener implements Listener {
                     List<String> lore = meta.getLore();
                     int index = 0;
                     for (String s : lore) {
-                        if (s.contains("收集") && s.contains(goal.getInfo()) && s.contains(String.valueOf(ChatColor.AQUA))) {
-                            lore.set(index, s.replace("" + ChatColor.AQUA + 0, "" + ChatColor.GREEN + num));
+                        if (s.contains(goal.getInfo()) && !s.contains("已完成")) {
+                            lore.set(index, goal.getInfo() + " " + S.toGreen("已完成"));
                             meta.setLore(lore);
                             item.setItemMeta(meta);
                             player.getInventory().setItem(i, item);
@@ -331,6 +280,33 @@ public class TaskListener implements Listener {
                     event.getDrops().remove(item);
                     break;
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayer(InventoryOpenEvent event) {
+        Inventory chest = event.getInventory();
+        if (!chest.getName().contains("container")) {
+            return;
+        }
+        int i = -1;
+        for (ItemStack item : chest.getContents()) {
+            i++;
+            if (item == null) continue;
+            for (Task task : tasks.values()) {
+                if (task.isBookItem(item)) {
+                    chest.setItem(i, null);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPickup(PlayerPickupItemEvent event) {
+        for (Task task : tasks.values()) {
+            if (task.isBookItem(event.getItem().getItemStack())) {
+                event.setCancelled(true);
             }
         }
     }

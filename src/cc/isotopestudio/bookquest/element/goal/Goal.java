@@ -7,14 +7,18 @@ package cc.isotopestudio.bookquest.element.goal;
 public abstract class Goal {
 
     int num;
+    private String info;
 
-    public Goal(int num) {
+    Goal(int num, String info) {
         this.num = num;
+        this.info = info;
     }
 
     public int getNum() {
         return num;
     }
 
-    public abstract String getInfo();
+    public String getInfo() {
+        return info;
+    }
 }

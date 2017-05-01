@@ -6,13 +6,8 @@ package cc.isotopestudio.bookquest.element.goal;
 
 public class MoneyGoal extends Goal {
 
-    public MoneyGoal(int num) {
-        super(num);
-    }
-
-    @Override
-    public String getInfo() {
-        return "" + num;
+    public MoneyGoal(int num, String intro) {
+        super(num, intro);
     }
 
     @Override
