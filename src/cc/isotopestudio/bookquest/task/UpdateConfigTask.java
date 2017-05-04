@@ -6,6 +6,7 @@ package cc.isotopestudio.bookquest.task;
 
 import cc.isotopestudio.bookquest.element.Task;
 import cc.isotopestudio.bookquest.element.goal.*;
+import me.winterguardian.jsonconverter.JsonConverter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -30,6 +31,22 @@ public class UpdateConfigTask extends BukkitRunnable {
             String displayName = s(section.getString("name"));
             List<String> taskInfo = section.getStringList("info")
                     .stream().map(UpdateConfigTask::s).collect(Collectors.toList());
+            StringBuilder sb = new StringBuilder();
+            section.getStringList("book").forEach(s -> {
+                sb.append(s).append("\\n");
+            });
+            String json = "{\"text\":\"\",\"extra\":[" + JsonConverter.toJson(sb.toString()) + ", " +
+                    "{\"text\":\"\\n [\", \"color\":\"green\", \"bold\":false, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, \"clickEvent\":{}}," +
+                    "{\"text\":\"接受任务\", \"color\":\"green\", \"bold\":true, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, " +
+                    "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/questaccept " + taskName + "\"}}," +
+                    "{\"text\":\"]\", \"color\":\"green\", \"bold\":false, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, \"clickEvent\":{}},"
+                    +
+                    "{\"text\":\"   [\", \"color\":\"red\", \"bold\":false, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, \"clickEvent\":{}}," +
+                    "{\"text\":\"放弃任务\", \"color\":\"red\", \"bold\":true, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, " +
+                    "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/questdecline\"}}," +
+                    "{\"text\":\"]\", \"color\":\"red\", \"bold\":false, \"italic\":false, \"underlined\":false, \"strikethrough\":false, \"ofuscated\":false, \"hoverEvent\":{}, \"clickEvent\":{}}"
+                    + "]}";
+            System.out.println(json);
             ConfigurationSection goalsConfig = section.getConfigurationSection("goal");
             if (goalsConfig == null) {
                 System.out.println("ERROR GOAL SETTINGS");
@@ -89,14 +106,11 @@ public class UpdateConfigTask extends BukkitRunnable {
                 continue;
             }
             List<String> rewards = section.getStringList("rewards");
-            List<String> rewardsinfo = section.getStringList("rewardsinfo")
-                    .stream().map(UpdateConfigTask::s).collect(Collectors.toList());
-
             String limit = null;
             if (section.isSet("limit")) {
                 limit = section.getString("limit");
             }
-            tasks.put(taskName, new Task(taskName, displayName, taskInfo, goals, rewards, rewardsinfo, limit));
+            tasks.put(taskName, new Task(taskName, displayName, taskInfo, json, goals, rewards, limit));
         }
 
         System.out.println(tasks);

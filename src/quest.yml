@@ -3,6 +3,9 @@ a:
   info:
   - "&1任务介绍"
   - "&2任务介绍"
+  book:
+  - "&1任务介绍"
+  - "&2任务介绍"
   goal:
     '1':
       type: mob
@@ -37,8 +40,6 @@ a:
       info: "&310分钟"
   rewards:
   - "give <player> diamond 1"
-  rewardsinfo:
-  - "&5获得钻石"
   # 每日一次
   limit: "daily"
   # 五次

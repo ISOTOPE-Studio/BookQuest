@@ -5,6 +5,7 @@
 package cc.isotopestudio.bookquest.gui;
 
 import cc.isotopestudio.bookquest.element.Task;
+import cc.isotopestudio.bookquest.util.BookUtil;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -12,9 +13,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+
+import static cc.isotopestudio.bookquest.BookQuest.plugin;
 
 
 public class TaskGUI extends GUI {
@@ -64,8 +69,18 @@ public class TaskGUI extends GUI {
                         if (exist[0]) {
                             player.sendMessage(S.toPrefixRed("你现在已经领取了这个任务"));
                         } else {
-                            player.getInventory().addItem(task.getBookItem());
-                            player.sendMessage(S.toPrefixGreen("成功领取任务"));
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+                                    BookMeta meta = (BookMeta) book.getItemMeta();
+                                    List<String> pages = new ArrayList<>();
+                                    pages.add(task.getBookJson());
+                                    BookUtil.setPages(meta, pages);
+                                    book.setItemMeta(meta);
+                                    BookUtil.openBook(book, player);
+                                }
+                            }.runTaskLater(plugin, 2);
                         }
                     } else {
                         player.sendMessage(S.toPrefixRed("你无法领取这个任务"));

@@ -41,12 +41,6 @@ import static cc.isotopestudio.bookquest.element.Task.tasks;
 public class TaskListener implements Listener {
 
     @EventHandler
-    public void on(InventoryClickEvent event) {
-        if (event.getClickedInventory() == null) return;
-
-    }
-
-    @EventHandler
     public void onClickBook(InventoryClickEvent event) {
         ItemStack item = event.getCurrentItem();
         if (!(item != null && item.getType() == Material.WRITTEN_BOOK)) {

@@ -9,3 +9,9 @@ commands:
   quest:
     description: BookQuest
     usage: /<command>
+  questaccept:
+    description: BookQuest
+    usage: /<command>
+  questdecline:
+    description: BookQuest
+    usage: /<command>

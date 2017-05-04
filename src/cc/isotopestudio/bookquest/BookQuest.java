@@ -1,6 +1,8 @@
 package cc.isotopestudio.bookquest;
 
 import cc.isotopestudio.bookquest.command.CommandQuest;
+import cc.isotopestudio.bookquest.command.CommandQuestA;
+import cc.isotopestudio.bookquest.command.CommandQuestD;
 import cc.isotopestudio.bookquest.listener.TaskListener;
 import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.task.MissionFailureTask;
@@ -48,6 +50,8 @@ public class BookQuest extends JavaPlugin {
         }
 
         this.getCommand("quest").setExecutor(new CommandQuest());
+        this.getCommand("questaccept").setExecutor(new CommandQuestA());
+        this.getCommand("questdecline").setExecutor(new CommandQuestD());
 
         Bukkit.getPluginManager().registerEvents(new TaskListener(), this);
 

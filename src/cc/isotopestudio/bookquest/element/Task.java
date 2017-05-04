@@ -26,38 +26,30 @@ public class Task {
     private final List<Goal> goals;
     private final List<String> rewards;
     private final String limit;
+    private final String bookJson;
 
     private final ItemStack displayItem = new ItemStack(Material.WRITTEN_BOOK);
     private final ItemStack bookItem = new ItemStack(Material.WRITTEN_BOOK);
 
-    public Task(String name, String displayName, List<String> taskInfo, List<Goal> goals,
-                List<String> rewards, List<String> rewardsinfo, String limit) {
+    public Task(String name, String displayName, List<String> taskInfo, String bookJson, List<Goal> goals,
+                List<String> rewards, String limit) {
         this.name = name;
         this.displayName = displayName;
         this.goals = goals;
         this.rewards = rewards;
         this.limit = limit;
+        this.bookJson = bookJson;
 
         List<String> dlore = new ArrayList<>();
         List<String> blore = new ArrayList<>();
-        dlore.add(S.toGray("-------------------------"));
-        blore.add(S.toGray("-------------------------"));
         dlore.addAll(taskInfo);
         blore.addAll(taskInfo);
-        dlore.add(S.toGray("-------------------------"));
-        blore.add(S.toGray("-------------------------"));
         dlore.add(S.toBoldGold("任务目标: "));
         blore.add(S.toBoldGold("任务目标: "));
         for (Goal goal : goals) {
             dlore.add(goal.getInfo());
             blore.add(goal.getInfo() + " " + S.toAqua("0") + S.toYellow(" / " + goal.getNum()));
         }
-        dlore.add(S.toBoldGold("任务奖励: "));
-        dlore.addAll(rewardsinfo);
-        dlore.add(S.toGray("————————————"));
-        blore.add(S.toBoldGold("任务奖励: "));
-        blore.addAll(rewardsinfo);
-        blore.add(S.toGray("————————————"));
         if (limit != null) {
             if (limit.equalsIgnoreCase("daily")) {
                 dlore.add(S.toGreen("每日任务"));
@@ -73,8 +65,6 @@ public class Task {
             dlore.add(S.toGreen("无限制"));
             blore.add(S.toGreen("无限制"));
         }
-        dlore.add(S.toGray("-------------------------"));
-        blore.add(S.toGray("-------------------------"));
         BookMeta dmeta = (BookMeta) displayItem.getItemMeta();
         dmeta.setAuthor(BookQuest.prefix);
         dmeta.addPage("");
@@ -95,6 +85,10 @@ public class Task {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getBookJson() {
+        return bookJson;
     }
 
     public List<Goal> getGoals() {
