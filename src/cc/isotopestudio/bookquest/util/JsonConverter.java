@@ -1,4 +1,4 @@
-package me.winterguardian.jsonconverter;
+package cc.isotopestudio.bookquest.util;
 
 import java.util.ArrayList;
 

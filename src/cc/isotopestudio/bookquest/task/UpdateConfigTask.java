@@ -6,7 +6,7 @@ package cc.isotopestudio.bookquest.task;
 
 import cc.isotopestudio.bookquest.element.Task;
 import cc.isotopestudio.bookquest.element.goal.*;
-import me.winterguardian.jsonconverter.JsonConverter;
+import cc.isotopestudio.bookquest.util.JsonConverter;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;

@@ -42,6 +42,14 @@ public class MissionFailureTask extends BukkitRunnable {
                 if (task == null) continue;
                 currentTask.add(task);
             }
+            if (player.getItemOnCursor() != null) {
+                for (Task task : tasks.values()) {
+                    if (task.isBookItem(player.getItemOnCursor())) {
+                        currentTask.add(task);
+                        break;
+                    }
+                }
+            }
             if (playerTaskMap.containsKey(player)) {
                 playerTaskMap.get(player).stream()
                         .filter(task -> !currentTask.contains(task))

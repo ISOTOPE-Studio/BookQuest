@@ -53,17 +53,13 @@ public class Task {
         if (limit != null) {
             if (limit.equalsIgnoreCase("daily")) {
                 dlore.add(S.toGreen("每日任务"));
-                blore.add(S.toGreen("每日任务"));
             } else if (limit.endsWith("h")) {
                 dlore.add(S.toGreen("每 " + limit.replaceAll("h", "小时")));
-                blore.add(S.toGreen("每 " + limit.replaceAll("h", "小时")));
             } else {
                 dlore.add(S.toGreen("可做 " + limit + " 次"));
-                blore.add(S.toGreen("可做 " + limit + " 次"));
             }
         } else {
             dlore.add(S.toGreen("无限制"));
-            blore.add(S.toGreen("无限制"));
         }
         BookMeta dmeta = (BookMeta) displayItem.getItemMeta();
         dmeta.setAuthor(BookQuest.prefix);

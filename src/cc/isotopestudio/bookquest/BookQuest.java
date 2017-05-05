@@ -59,7 +59,7 @@ public class BookQuest extends JavaPlugin {
         new OnlineTimeTask().runTaskTimer(this, 60, 20 * 60);
         new MissionFailureTask().runTaskTimer(this, 60, 20);
 
-        getLogger().info(pluginName + "成功加载!");
+        getLogger().info(pluginName + "1.2.0 成功加载!");
         getLogger().info(pluginName + "由ISOTOPE Studio制作!");
         getLogger().info("http://isotopestudio.cc");
     }
