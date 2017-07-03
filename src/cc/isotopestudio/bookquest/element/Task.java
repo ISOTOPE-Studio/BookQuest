@@ -6,7 +6,7 @@ package cc.isotopestudio.bookquest.element;
 
 import cc.isotopestudio.bookquest.BookQuest;
 import cc.isotopestudio.bookquest.element.goal.Goal;
-import cc.isotopestudio.bookquest.sql.SqlManager;
+import cc.isotopestudio.bookquest.data.PlayerData;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -100,7 +100,7 @@ public class Task {
 
     public boolean isAvailable(Player player) {
         if (limit == null) return true;
-        List<Long> record = SqlManager.getRecord(player, this);
+        List<Long> record = PlayerData.getRecord(player, this);
         if (record.size() == 0) return true;
         if (limit.equalsIgnoreCase("daily")) {
             return !isToday(new Date(record.get(record.size() - 1)));

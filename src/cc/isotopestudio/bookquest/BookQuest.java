@@ -4,7 +4,6 @@ import cc.isotopestudio.bookquest.command.CommandQuest;
 import cc.isotopestudio.bookquest.command.CommandQuestA;
 import cc.isotopestudio.bookquest.command.CommandQuestD;
 import cc.isotopestudio.bookquest.listener.TaskListener;
-import cc.isotopestudio.bookquest.sql.SqlManager;
 import cc.isotopestudio.bookquest.task.MissionFailureTask;
 import cc.isotopestudio.bookquest.task.OnlineTimeTask;
 import cc.isotopestudio.bookquest.task.UpdateConfigTask;
@@ -23,8 +22,8 @@ public class BookQuest extends JavaPlugin {
     public static final String prefix = (new StringBuilder()).append(ChatColor.GOLD).append(ChatColor.BOLD).append("[")
             .append("ÈÎÎñ").append("]").append(ChatColor.RED).toString();
 
-    public PluginFile config;
     public PluginFile questFile;
+    public PluginFile playerFile;
 
     // Vault
     public static Economy econ = null;
@@ -40,14 +39,9 @@ public class BookQuest extends JavaPlugin {
             return;
         }
 
-        config = new PluginFile(this, "config.yml", "config.yml");
         questFile = new PluginFile(this, "quest.yml", "quest.yml");
         questFile.setEditable(false);
-
-        if (!SqlManager.init()) {
-            getPluginLoader().disablePlugin(this);
-            return;
-        }
+        playerFile = new PluginFile(this, "player.yml");
 
         this.getCommand("quest").setExecutor(new CommandQuest());
         this.getCommand("questaccept").setExecutor(new CommandQuestA());

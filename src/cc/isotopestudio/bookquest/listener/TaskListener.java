@@ -9,7 +9,7 @@ import cc.isotopestudio.bookquest.element.goal.Goal;
 import cc.isotopestudio.bookquest.element.goal.ItemGoal;
 import cc.isotopestudio.bookquest.element.goal.MobGoal;
 import cc.isotopestudio.bookquest.element.goal.MoneyGoal;
-import cc.isotopestudio.bookquest.sql.SqlManager;
+import cc.isotopestudio.bookquest.data.PlayerData;
 import cc.isotopestudio.bookquest.task.MissionFailureTask;
 import cc.isotopestudio.bookquest.util.S;
 import org.bukkit.ChatColor;
@@ -22,7 +22,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.Inventory;
@@ -108,7 +107,7 @@ public class TaskListener implements Listener {
                         }
                     }
                     task.setRewards(player);
-                    SqlManager.addRecord(player, task);
+                    PlayerData.addRecord(player, task);
                 }
                 break;
             }
